@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,7 +17,7 @@ type Result struct {
 	pbr   float64
 }
 
-func FindValue(doc *goquery.Document) float64 {
+func FindValue(doc *goquery.Document, key string) float64 {
 	var value float64
 
 	doc.Find("._38iJU1zx").Each(func(i int, s *goquery.Selection) {
@@ -24,8 +25,18 @@ func FindValue(doc *goquery.Document) float64 {
 			sss := ss.Find("span")
 			t := sss.First().Text()
 
-			if t == "前日終値" {
-				v := strings.Replace(sss.Eq(1).Text(), ",", "", -1)
+			if t == key {
+				var v string
+
+				// key 別に値を取得
+				switch key {
+				case "前日終値":
+					v = strings.Replace(sss.Eq(1).Text(), ",", "", -1)
+				case "PER", "PBR":
+					v = sss.Eq(3).Text()
+					v = strings.Replace(v, "(連)", "", -1)
+					v = strings.Replace(v, "倍", "", -1)
+				}
 
 				value, _ = strconv.ParseFloat(v, 32)
 			}
@@ -35,9 +46,10 @@ func FindValue(doc *goquery.Document) float64 {
 	return value
 }
 
-func ExampleScrape() {
+func ExampleScrape(code string) {
 	// Request the HTML page.
-	res, err := http.Get("https://finance.yahoo.co.jp/quote/2685.T")
+	url := fmt.Sprintf("https://finance.yahoo.co.jp/quote/%s.T", code)
+	res, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,12 +66,22 @@ func ExampleScrape() {
 
 	// Find the review items
 	var result Result
-
-	result.price = FindValue(doc)
+	result.price = FindValue(doc, "前日終値")
+	result.per = FindValue(doc, "PER")
+	result.pbr = FindValue(doc, "PBR")
 
 	fmt.Printf("Result: %f\n", result.price)
+	fmt.Printf("Result: %f\n", result.per)
+	fmt.Printf("Result: %f\n", result.pbr)
 }
 
 func main() {
-	ExampleScrape()
+	// 第一引数を取得する
+	flag.Parse()
+	code := flag.Arg(0)
+	if code == "" {
+		log.Fatal("第一引数に企業コードを指定してください")
+	}
+
+	ExampleScrape(code)
 }
