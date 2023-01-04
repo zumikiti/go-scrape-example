@@ -4,9 +4,36 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
+
+type Result struct {
+	price float64
+	per   float64
+	pbr   float64
+}
+
+func FindValue(doc *goquery.Document) float64 {
+	var value float64
+
+	doc.Find("._38iJU1zx").Each(func(i int, s *goquery.Selection) {
+		s.Each(func(i int, ss *goquery.Selection) {
+			sss := ss.Find("span")
+			t := sss.First().Text()
+
+			if t == "前日終値" {
+				v := strings.Replace(sss.Eq(1).Text(), ",", "", -1)
+
+				value, _ = strconv.ParseFloat(v, 32)
+			}
+		})
+	})
+
+	return value
+}
 
 func ExampleScrape() {
 	// Request the HTML page.
@@ -26,11 +53,11 @@ func ExampleScrape() {
 	}
 
 	// Find the review items
-	doc.Find("._1-yujUee").Each(func(i int, s *goquery.Selection) {
-		// For each item found, get the title
-		title := s.Find("span").Text()
-		fmt.Printf("Review %d: %s\n", i, title)
-	})
+	var result Result
+
+	result.price = FindValue(doc)
+
+	fmt.Printf("Result: %f\n", result.price)
 }
 
 func main() {
