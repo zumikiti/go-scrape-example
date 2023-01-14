@@ -73,6 +73,8 @@ func ExampleScrape(code string) {
 	fmt.Printf("Result: %f\n", result.price)
 	fmt.Printf("Result: %f\n", result.per)
 	fmt.Printf("Result: %f\n", result.pbr)
+
+	saveData(result)
 }
 
 func main() {
