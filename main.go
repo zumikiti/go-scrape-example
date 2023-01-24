@@ -12,6 +12,7 @@ import (
 )
 
 type Result struct {
+	code  int
 	price float64
 	per   float64
 	pbr   float64
@@ -66,6 +67,7 @@ func ExampleScrape(code string) {
 
 	// Find the review items
 	var result Result
+	result.code, _ = strconv.Atoi(code)
 	result.price = FindValue(doc, "前日終値")
 	result.per = FindValue(doc, "PER")
 	result.pbr = FindValue(doc, "PBR")
