@@ -3,21 +3,34 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"strconv"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "127.0.0.1"
-	port     = 5432
-	user     = "sail"
-	password = "password"
-	dbname   = "kabu"
-)
-
 func psqlConnect() string {
+	// .env をマップ
+	var envs map[string]string
+	envs, err := godotenv.Read(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// port は数値で渡す必要があったので変換
+	port, _ := strconv.Atoi(envs["DB_PORT"])
+
 	// connection string
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	psqlconn := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		envs["DB_HOST"],
+		port,
+		envs["DB_USER"],
+		envs["DB_PASSWORD"],
+		envs["DB_NAME"],
+	)
 
 	return psqlconn
 }
