@@ -15,9 +15,15 @@ const (
 	dbname   = "kabu"
 )
 
-func saveData(data Result) {
+func psqlConnect() string {
 	// connection string
 	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+
+	return psqlconn
+}
+
+func saveData(data Result) {
+	psqlconn := psqlConnect()
 
 	// open database
 	db, err := sql.Open("postgres", psqlconn)
