@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/zumikiti/go-scrap-example/src/scrap"
 )
 
 func main() {
@@ -18,7 +20,7 @@ func main() {
 	switch os.Args[1] {
 	case "scrap":
 		scrapCmd.Parse(os.Args[2:])
-		ExampleScrape(*code)
+		scrap.ExampleScrape(*code)
 	default:
 		fmt.Println("expected subcommands.")
 		os.Exit(1)

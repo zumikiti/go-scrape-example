@@ -1,4 +1,4 @@
-package main
+package scrap
 
 import (
 	"flag"
@@ -9,14 +9,9 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/zumikiti/go-scrap-example/src/db"
+	"github.com/zumikiti/go-scrap-example/src/typefile"
 )
-
-type Result struct {
-	code  int
-	price float64
-	per   float64
-	pbr   float64
-}
 
 func FindValue(doc *goquery.Document, key string) float64 {
 	var value float64
@@ -66,17 +61,17 @@ func ExampleScrape(code string) {
 	}
 
 	// Find the review items
-	var result Result
-	result.code, _ = strconv.Atoi(code)
-	result.price = FindValue(doc, "前日終値")
-	result.per = FindValue(doc, "PER")
-	result.pbr = FindValue(doc, "PBR")
+	var result typefile.Result
+	result.Code, _ = strconv.Atoi(code)
+	result.Price = FindValue(doc, "前日終値")
+	result.Per = FindValue(doc, "PER")
+	result.Pbr = FindValue(doc, "PBR")
 
-	fmt.Printf("Result: %f\n", result.price)
-	fmt.Printf("Result: %f\n", result.per)
-	fmt.Printf("Result: %f\n", result.pbr)
+	fmt.Printf("Result: %f\n", result.Price)
+	fmt.Printf("Result: %f\n", result.Per)
+	fmt.Printf("Result: %f\n", result.Pbr)
 
-	saveData(result)
+	db.SaveData(result)
 }
 
 func Scrap() {

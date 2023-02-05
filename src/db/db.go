@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"database/sql"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/zumikiti/go-scrap-example/src/typefile"
 )
 
 func psqlConnect() string {
@@ -35,25 +36,25 @@ func psqlConnect() string {
 	return psqlconn
 }
 
-func saveData(data Result) {
+func SaveData(data typefile.Result) {
 	psqlconn := psqlConnect()
 
 	// open database
 	db, err := sql.Open("postgres", psqlconn)
-	CheckError(err)
+	checkError(err)
 
 	// close database
 	defer db.Close()
 
 	// insert
 	insertStmt := `insert into "prices"("price", "per", "pbr") values($1, $2, $3)`
-	_, e := db.Exec(insertStmt, data.price, data.per, data.pbr)
-	CheckError(e)
+	_, e := db.Exec(insertStmt, data.Price, data.Per, data.Pbr)
+	checkError(e)
 
 	fmt.Println("Inserted!")
 }
 
-func CheckError(err error) {
+func checkError(err error) {
 	if err != nil {
 		panic(err)
 	}
