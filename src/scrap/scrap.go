@@ -1,7 +1,6 @@
 package scrap
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,7 +12,7 @@ import (
 	"github.com/zumikiti/go-scrap-example/src/typefile"
 )
 
-func FindValue(doc *goquery.Document, key string) float64 {
+func findValue(doc *goquery.Document, key string) float64 {
 	var value float64
 
 	doc.Find("._38iJU1zx").Each(func(i int, s *goquery.Selection) {
@@ -63,24 +62,13 @@ func ExampleScrape(code string) {
 	// Find the review items
 	var result typefile.Result
 	result.Code, _ = strconv.Atoi(code)
-	result.Price = FindValue(doc, "前日終値")
-	result.Per = FindValue(doc, "PER")
-	result.Pbr = FindValue(doc, "PBR")
+	result.Price = findValue(doc, "前日終値")
+	result.Per = findValue(doc, "PER")
+	result.Pbr = findValue(doc, "PBR")
 
 	fmt.Printf("Result: %f\n", result.Price)
 	fmt.Printf("Result: %f\n", result.Per)
 	fmt.Printf("Result: %f\n", result.Pbr)
 
 	db.SaveData(result)
-}
-
-func Scrap() {
-	// 第一引数を取得する
-	flag.Parse()
-	code := flag.Arg(0)
-	if code == "" {
-		log.Fatal("第一引数に企業コードを指定してください")
-	}
-
-	ExampleScrape(code)
 }
