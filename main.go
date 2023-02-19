@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/zumikiti/go-scrap-example/src/scrap"
+	"github.com/zumikiti/go-scrap-example/src/scrape"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 	switch os.Args[1] {
 	case "scrap":
 		scrapCmd.Parse(os.Args[2:])
-		scrap.ExampleScrape(*code)
+		scrape.Scrape(*code)
 	default:
 		fmt.Println("expected subcommands.")
 		os.Exit(1)

@@ -1,4 +1,4 @@
-package scrap
+package scrape
 
 import (
 	"fmt"
@@ -41,7 +41,7 @@ func findValue(doc *goquery.Document, key string) float64 {
 	return value
 }
 
-func ExampleScrape(code string) {
+func Scrape(code string) {
 	// Request the HTML page.
 	url := fmt.Sprintf("https://finance.yahoo.co.jp/quote/%s.T", code)
 	res, err := http.Get(url)
